@@ -1,0 +1,11 @@
+.env
+venv/
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# Local documents / generated vector data
+data/*
+!data/.gitkeep
+chroma_db/
