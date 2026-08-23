@@ -1,14 +1,14 @@
 # StudyLens RAG
 
-A document research assistant for learning and experimenting with Retrieval-Augmented Generation (RAG).
+StudyLens is a small RAG project I am building to understand how document-based AI systems work.
 
-The project will be built step by step to understand the full RAG pipeline instead of hiding it behind a high-level framework.
+The idea is simple: load a PDF, extract its text, split it into useful chunks, store embeddings, retrieve the most relevant parts for a question, and then use Gemini to answer from that context.
 
-## Planned Pipeline
+## Planned Flow
 
-PDF → text extraction → chunking → embeddings → vector storage → semantic retrieval → Gemini → grounded answer with sources
+PDF → text extraction → chunking → embeddings → vector search → Gemini → answer with source/page reference
 
-## Initial Tech Stack
+## Tech Stack
 
 - Python
 - PyMuPDF
@@ -16,6 +16,6 @@ PDF → text extraction → chunking → embeddings → vector storage → seman
 - ChromaDB
 - python-dotenv
 
-## Current Status
+## Current Progress
 
-Project initialized. First implementation milestone: PDF text extraction with page and source metadata.
+The repository is initialized. The first step is PDF text extraction while keeping the page number and source file with the extracted text.
