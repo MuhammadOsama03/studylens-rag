@@ -32,16 +32,22 @@ def chunk_pages(pages: list[dict], chunk_size: int = 800, overlap: int = 150) ->
         chunk_number = 1
 
         while start < len(text):
-            end = start + chunk_size
+            end = min(start + chunk_size, len(text))
             chunk_text = text[start:end].strip()
 
             if chunk_text:
+                source = page["source"]
+                page_number = page["page"]
                 chunks.append(
                     {
                         "text": chunk_text,
-                        "page": page["page"],
-                        "source": page["source"],
+                        "page": page_number,
+                        "source": source,
                         "chunk": chunk_number,
+                        "chunk_id": f"{source}-p{page_number}-c{chunk_number}",
+                        "start_char": start,
+                        "end_char": end,
+                        "char_count": len(chunk_text),
                     }
                 )
 
