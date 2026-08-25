@@ -1,7 +1,21 @@
 from pathlib import Path
 
 from chunker import chunk_pages
+from embeddings import embed_chunks
 from pdf_loader import load_pdf
+from vector_store import store_embedded_chunks
+
+
+def index_pdf(file_path: Path) -> int:
+    """Load, chunk, embed, and store a PDF in the local vector database."""
+    pages = load_pdf(str(file_path))
+    chunks = chunk_pages(pages)
+
+    if not chunks:
+        return 0
+
+    embedded_chunks = embed_chunks(chunks)
+    return store_embedded_chunks(embedded_chunks)
 
 
 def main():
@@ -13,21 +27,10 @@ def main():
         return
 
     file_path = pdf_files[0]
-    pages = load_pdf(str(file_path))
-    chunks = chunk_pages(pages)
+    stored_chunks = index_pdf(file_path)
 
-    print(f"Loaded: {file_path.name}")
-    print(f"Pages with extracted text: {len(pages)}")
-    print(f"Chunks created: {len(chunks)}\n")
-
-    for chunk in chunks[:3]:
-        print(
-            f"Source: {chunk['source']} | "
-            f"Page: {chunk['page']} | "
-            f"Chunk: {chunk['chunk']}"
-        )
-        print(chunk["text"][:300])
-        print("\n" + "-" * 60 + "\n")
+    print(f"Indexed: {file_path.name}")
+    print(f"Chunks stored: {stored_chunks}")
 
 
 if __name__ == "__main__":
