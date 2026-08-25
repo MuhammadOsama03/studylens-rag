@@ -37,11 +37,8 @@ def _validate_embedding(embedding: list) -> None:
 
 
 def _chunk_id(chunk: dict) -> str:
-    """Create a stable ID so re-indexing the same chunk updates it instead of duplicating it."""
-    identity = (
-        f"{chunk['source']}|{chunk['page']}|{chunk['chunk']}|"
-        f"{chunk['text']}"
-    )
+    """Create a stable ID so re-indexing updates the same chunk position."""
+    identity = f"{chunk['source']}|{chunk['page']}|{chunk['chunk']}"
     return hashlib.sha256(identity.encode("utf-8")).hexdigest()
 
 
