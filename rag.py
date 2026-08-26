@@ -7,9 +7,31 @@ GENERATION_MODEL = "gemini-2.5-flash"
 
 def _build_context(chunks: list[dict]) -> str:
     return "\n\n".join(
-        f"Context {chunk['rank']}:\n{chunk['text']}"
+        (
+            f"Context {chunk['rank']} "
+            f"(source: {chunk.get('source') or 'unknown'}, page: {chunk.get('page') or 'unknown'}):\n"
+            f"{chunk['text']}"
+        )
         for chunk in chunks
     )
+
+
+def _format_sources(chunks: list[dict]) -> list[dict]:
+    seen = set()
+    sources = []
+
+    for chunk in chunks:
+        source = chunk.get("source")
+        page = chunk.get("page")
+        key = (source, page)
+
+        if key in seen:
+            continue
+
+        seen.add(key)
+        sources.append({"source": source, "page": page})
+
+    return sources
 
 
 def answer_question(question: str, top_k: int = 5) -> dict:
@@ -42,4 +64,4 @@ Question: {question.strip()}
     )
 
     answer = response.text.strip() if response.text else "No answer was generated."
-    return {"answer": answer, "sources": chunks}
+    return {"answer": answer, "sources": _format_sources(chunks)}
