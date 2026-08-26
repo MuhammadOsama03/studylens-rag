@@ -47,7 +47,7 @@ def store_embedded_chunks(
     db_path: str | Path = DEFAULT_DB_PATH,
     collection_name: str = DEFAULT_COLLECTION,
 ) -> int:
-    """Persist embedded chunks and their metadata in local ChromaDB storage."""
+    """Persist embedded chunks and replace older chunks for the same source PDFs."""
     if not isinstance(embedded_chunks, list):
         raise TypeError("embedded_chunks must be a list")
 
@@ -58,6 +58,7 @@ def store_embedded_chunks(
     documents = []
     embeddings = []
     metadatas = []
+    sources = set()
 
     for chunk in embedded_chunks:
         if not isinstance(chunk, dict):
@@ -85,12 +86,19 @@ def store_embedded_chunks(
             if key not in {"text", "embedding"} and value is not None
         }
 
+        sources.add(source.strip())
         ids.append(_chunk_id(chunk))
         documents.append(text.strip())
         embeddings.append(embedding)
         metadatas.append(metadata)
 
     collection = get_collection(db_path=db_path, collection_name=collection_name)
+
+    # Remove the previous version of each source first. Without this, re-indexing a
+    # shortened or re-chunked PDF can leave obsolete chunks behind in retrieval.
+    for source in sources:
+        collection.delete(where={"source": source})
+
     collection.upsert(
         ids=ids,
         documents=documents,
