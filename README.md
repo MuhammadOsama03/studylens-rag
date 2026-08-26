@@ -2,11 +2,11 @@
 
 StudyLens is a small RAG project I am building to understand how document-based AI systems work.
 
-The idea is simple: load a PDF, extract its text, split it into useful chunks, create embeddings, store them locally, and later retrieve the most relevant parts for a question before sending that context to Gemini.
+The idea is simple: load PDFs, extract their text, split it into useful chunks, create embeddings, store them locally, and retrieve the most relevant parts before sending grounded context to Gemini.
 
 ## Flow
 
-PDF → text extraction → chunking → embeddings → ChromaDB → retrieval → Gemini → answer with source/page reference
+PDFs → text extraction → chunking → embeddings → ChromaDB → semantic search → Top-K retrieval → Gemini → answer with source/page references
 
 ## Tech Stack
 
@@ -18,9 +18,9 @@ PDF → text extraction → chunking → embeddings → ChromaDB → retrieval �
 
 ## Current Progress
 
-The document indexing side is now in place. StudyLens can extract PDF text with page metadata, split it into overlapping chunks, generate Gemini embeddings in batches, and store the embedded chunks in a local ChromaDB collection.
+The core RAG pipeline is now in place. StudyLens can index multiple PDFs, preserve page metadata, generate Gemini embeddings in batches, store chunks in a local ChromaDB collection, retrieve relevant context with semantic search, and generate grounded answers with source/page references.
 
-Next I am working on retrieval and question answering.
+The CLI also supports adjustable retrieval depth with `/topk N` so retrieval behavior can be tested without changing the code.
 
 ## Setup
 
@@ -36,4 +36,14 @@ Create a `.env` file in the project root and add your Gemini API key:
 GEMINI_API_KEY=your_api_key
 ```
 
-PDF files and the local ChromaDB data are kept out of Git.
+Add one or more PDFs to the `data/` folder and run:
+
+```bash
+python app.py
+```
+
+PDF files, API secrets, and local ChromaDB data are kept out of Git.
+
+## Next Step
+
+Run the complete pipeline with real documents and refine retrieval behavior based on the results.
