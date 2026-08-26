@@ -7,6 +7,9 @@ from rag import answer_question
 from vector_store import store_embedded_chunks
 
 
+DEFAULT_TOP_K = 5
+
+
 def index_pdf(file_path: Path) -> int:
     """Load, chunk, embed, and store a PDF in the local vector database."""
     pages = load_pdf(str(file_path))
@@ -36,7 +39,9 @@ def index_documents(data_dir: Path = Path("data")) -> tuple[int, int]:
 
 
 def ask_questions() -> None:
-    print("\nStudyLens is ready. Type 'exit' to quit.\n")
+    top_k = DEFAULT_TOP_K
+    print("\nStudyLens is ready. Type 'exit' to quit.")
+    print("Use '/topk N' to change how many chunks are retrieved.\n")
 
     while True:
         question = input("You: ").strip()
@@ -48,8 +53,18 @@ def ask_questions() -> None:
         if not question:
             continue
 
+        if question.lower().startswith("/topk"):
+            parts = question.split()
+            if len(parts) != 2 or not parts[1].isdigit() or int(parts[1]) <= 0:
+                print("Usage: /topk N  (example: /topk 3)\n")
+                continue
+
+            top_k = int(parts[1])
+            print(f"Retrieval depth set to {top_k}.\n")
+            continue
+
         try:
-            result = answer_question(question)
+            result = answer_question(question, top_k=top_k)
             print(f"\nStudyLens: {result['answer']}\n")
 
             if result["sources"]:
