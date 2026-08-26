@@ -6,6 +6,7 @@ from vector_store import get_collection
 
 
 DEFAULT_TOP_K = 5
+MAX_TOP_K = 20
 
 
 def embed_query(question: str) -> list[float]:
@@ -27,8 +28,8 @@ def embed_query(question: str) -> list[float]:
 
 def semantic_search(question: str, limit: int = DEFAULT_TOP_K) -> list[dict]:
     """Search the local StudyLens collection for semantically similar chunks."""
-    if not isinstance(limit, int) or limit <= 0:
-        raise ValueError("limit must be a positive integer")
+    if not isinstance(limit, int) or not 1 <= limit <= MAX_TOP_K:
+        raise ValueError(f"limit must be between 1 and {MAX_TOP_K}")
 
     collection = get_collection()
     collection_size = collection.count()
@@ -49,6 +50,7 @@ def semantic_search(question: str, limit: int = DEFAULT_TOP_K) -> list[dict]:
     return [
         {"text": text, "metadata": metadata or {}, "distance": distance}
         for text, metadata, distance in zip(documents, metadatas, distances)
+        if isinstance(text, str) and text.strip()
     ]
 
 
