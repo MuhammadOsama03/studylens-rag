@@ -4,6 +4,7 @@ from chunker import chunk_pages
 from embeddings import embed_chunks
 from pdf_loader import load_pdf
 from rag import answer_question
+from retrieval import MAX_TOP_K
 from vector_store import store_embedded_chunks
 
 
@@ -41,7 +42,7 @@ def index_documents(data_dir: Path = Path("data")) -> tuple[int, int]:
 def ask_questions() -> None:
     top_k = DEFAULT_TOP_K
     print("\nStudyLens is ready. Type 'exit' to quit.")
-    print("Use '/topk N' to change how many chunks are retrieved.\n")
+    print(f"Use '/topk N' to change retrieval depth (1-{MAX_TOP_K}).\n")
 
     while True:
         question = input("You: ").strip()
@@ -55,8 +56,12 @@ def ask_questions() -> None:
 
         if question.lower().startswith("/topk"):
             parts = question.split()
-            if len(parts) != 2 or not parts[1].isdigit() or int(parts[1]) <= 0:
-                print("Usage: /topk N  (example: /topk 3)\n")
+            if (
+                len(parts) != 2
+                or not parts[1].isdigit()
+                or not 1 <= int(parts[1]) <= MAX_TOP_K
+            ):
+                print(f"Usage: /topk N  (N must be between 1 and {MAX_TOP_K})\n")
                 continue
 
             top_k = int(parts[1])
