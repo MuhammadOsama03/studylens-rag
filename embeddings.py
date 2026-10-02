@@ -1,6 +1,6 @@
 from google.genai import types
 
-from config import client
+from config import get_client
 
 
 EMBEDDING_MODEL = "gemini-embedding-001"
@@ -21,7 +21,7 @@ def _validate_chunks(chunks: list[dict]) -> None:
 def _embed_batch(chunks: list[dict]) -> list[dict]:
     texts = [chunk["text"].strip() for chunk in chunks]
 
-    response = client.models.embed_content(
+    response = get_client().models.embed_content(
         model=EMBEDDING_MODEL,
         contents=texts,
         config=types.EmbedContentConfig(task_type="RETRIEVAL_DOCUMENT"),

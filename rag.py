@@ -1,4 +1,4 @@
-from config import client
+from config import get_client
 from retrieval import retrieve_context
 
 
@@ -58,7 +58,7 @@ Context:
 Question: {question.strip()}
 """
 
-    response = client.models.generate_content(
+    response = get_client().models.generate_content(
         model=GENERATION_MODEL,
         contents=prompt,
     )

@@ -1,6 +1,6 @@
 from google.genai import types
 
-from config import client
+from config import get_client
 from embeddings import EMBEDDING_MODEL
 from vector_store import get_collection
 
@@ -14,7 +14,7 @@ def embed_query(question: str) -> list[float]:
     if not isinstance(question, str) or not question.strip():
         raise ValueError("question cannot be empty")
 
-    response = client.models.embed_content(
+    response = get_client().models.embed_content(
         model=EMBEDDING_MODEL,
         contents=question.strip(),
         config=types.EmbedContentConfig(task_type="RETRIEVAL_QUERY"),
