@@ -51,6 +51,9 @@ def chunk_pages(pages: list[dict], chunk_size: int = 800, overlap: int = 150) ->
                     }
                 )
 
+            if end == len(text):
+                break
+
             start += chunk_size - overlap
             chunk_number += 1
 
