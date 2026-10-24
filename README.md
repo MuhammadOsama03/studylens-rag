@@ -47,3 +47,23 @@ PDF files, API secrets, and local ChromaDB data are kept out of Git.
 ## Next Step
 
 Run the complete pipeline with real documents and refine retrieval behavior based on the results.
+
+## Quality checks
+
+Run offline unit tests before indexing private documents:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+The tests mock Gemini for RAG and pipeline checks, so no API key is required for those test cases. GitHub Actions runs the same suite on pushes and pull requests.
+
+### Real-document acceptance test
+
+1. Put a non-sensitive, text-based PDF in `data/` with a known fact on a known page.
+2. Configure `GEMINI_API_KEY` locally and run `python app.py`.
+3. Ask a question answered by the PDF and confirm the answer and source/page reference.
+4. Ask a question that the document cannot answer and check whether the assistant declines to invent facts.
+5. Re-index after editing a PDF and verify obsolete chunks are no longer retrieved.
+
+**Limitations:** The current pipeline needs text-extractable PDFs; scanned/image-only PDFs require OCR. Source citations identify retrieved pages, not independently verified claims. The real Gemini integration must be validated with your own key and representative documents.
